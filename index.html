@@ -1,0 +1,796 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Assignment 1- Defining &amp; Solving RL Environments</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="3c11e509-30bc-4442-8f7d-4519169ac1ab" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">🐿️</span></div><h1 class="page-title">Assignment 1- Defining &amp; Solving RL Environments</h1><p class="page-description"></p></header><div class="page-body"><p id="1318a6c3-e40b-80b9-83f4-e13285b0756e" class="">
+</p><p id="1318a6c3-e40b-80c1-b0ad-c5da133ecf2c" class=""><strong>Copyright Notice</strong></p><p id="1318a6c3-e40b-80d9-aaba-ff577eec7d77" class="">This work is protected. Unauthorized copying, distribution, reproduction, or redistribution of any portion of this content in any form is strictly prohibited. No part of this work may be reproduced, stored, or transmitted without prior written permission from the author. Violators will be subject to legal action as provided by applicable laws.</p><p id="346dde81-0ffd-4e4f-8345-b5442ba37f75" class="">
+</p><hr id="70ced4f2-743f-43ee-a3b6-275345d90f05"/><nav id="8b17e016-8883-4be4-880b-675bf5e34fc5" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#8ece7013-034d-47b5-b521-69651d350573">PART 1 - Define an RL Environment</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#00b4be90-15f3-4118-9203-ddf690bc982d">Squirrel Maze</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#82d5d73b-0fef-40c3-b738-237171e7d221">1.1 Deterministic Environment: <code>class SquirrelPet(gym.Env)</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#d95c0473-ad0a-4f4a-86c5-0c7fa8c8a0e4">1.2 Stochastic Environment: <code>class SquirrelPet_stoch(gym.Env)</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#3b433246-11e3-4742-ba8e-1df21b671525">Safety in AI</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#e70d4c12-f353-454b-a1a6-71cf2a45b678">PART 2 - Applying Tabular Methods</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#3dd7acda-b3fb-49de-ae81-f7c1182e7576">Q-Learning - Deterministic</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#6f23aa07-f922-4d31-b49f-a70f6a57a325">Initial Setup and Parameters</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#3e24013e-dc63-4598-ac6b-5a27c7aca36f">Base Model Evaluation</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#323213a2-7f01-4403-a6ee-39fd1cdc397c">Hyperparameter #1: Max Timestamp Values</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#ca65fc75-55d9-415b-a105-b0394f3f5e9d">Hyperparameter #2: Decay Rate</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#2886da10-2352-4ed9-ade9-4b8b0207322b">Overall Efficient values</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#0d9fd330-52de-4c7e-85b2-56ab60f4f6e3">Q-Learning - Stochastic</a></div><div class="table_of_contents-item table_of_contents-indent-2"><a class="table_of_contents-link" href="#316d3fad-99bd-4972-8926-cea99b103c95">Initial Setup and Parameters</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#c77b0b41-641b-4c97-94c1-08f11861496d">Double Q-Learning - Deterministic</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#d1263a2f-8c7b-478a-93a6-0b1e01faedf9">Double Q-Learning - Stochastic</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#1ef4dab3-b0fc-4a3b-ab77-13bcc71434db"><strong>Summary</strong></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#2695060a-3223-4f30-a847-d8390e2561f0">Overview</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#d65f20f0-5200-411c-a65e-4ecdf8bdfaf5">Part 3 - Solve Stock Trading Environment</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#f6e1a9ec-4bbd-4232-97e4-90645c21641d"><strong>Stock Trading Environment Overview</strong></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#5d9f118b-1298-4777-83bd-c97edf8609a2"><strong>Results of Applying Q-learning Algorithm</strong></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#96d9fe29-9a8c-449e-9f2a-7a4dcbb3ae1c">Bonus</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#8165a01e-19c0-474e-8e5d-5f0145c4d1df">GitHub Expert:</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#4703e0f0-a131-4f43-8b3d-f5b7df380288">CCR Submission</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#331df221-b585-4c66-bb3e-116112d8f989">References</a></div></nav><hr id="9749bdbe-51b0-4052-9f94-2ece83d3229e"/><p id="250a831c-a692-44d3-b6a9-685793f6a70e" class="">This report provides insights into the first assignment, which focuses on defining and solving reinforcement learning (RL) environments. In this assignment, I outline the RL agents, examine the logic and functionality of our environment and agent, and employ tabular methods such as SARSA and Q-learning to train our agent to maximize rewards. This document is an initial submission for the checkpoint of assignment 1, detailing the tasks outlined in sections one and two.</p><h1 id="8ece7013-034d-47b5-b521-69651d350573" class="">PART 1 - Define an RL Environment</h1><p id="4d6b28e2-c405-4b75-98a3-7ddffd2d0408" class="">
+</p><h3 id="00b4be90-15f3-4118-9203-ddf690bc982d" class="">Squirrel Maze</h3><div id="6a0c46ce-7baf-4c76-9aaf-6c70283e0d43" class="column-list"><div id="f133415d-5715-4c2f-9d07-064b57158e4c" style="width:43.75%" class="column"><p id="f938f447-f047-4504-99ce-3f68a58cde22" class="">As a part of the assignment we are defining two environments one is Deterministic and the other is the stochastic focusing on a squirrel navigating through a grid to achieve goals while avoiding hunters. Both environments have the same state space, action space, and objective as shown in the figure. Here&#x27;s a comparison between the deterministic and stochastic environments described:</p></div><div id="eb242ca0-e7d5-4df2-b0fd-2ca7fe1c6357" style="width:56.25%" class="column"><figure id="021dd85b-a20e-4967-9312-1662f9e65a48" class="image" style="text-align:center"><a href="Untitled.png"><img style="width:372.359375px" src="Untitled.png"/></a></figure></div></div><p id="957613ac-fa7f-4ed6-b40d-5291991be0ef" class=""><strong>Set of States:</strong></p><p id="e1579d95-d952-4224-ae62-1a5a0b7ab114" class="">Here are the various states for the agent squirrel, described in bullet points:</p><ul id="56743d6c-5fc3-4ca4-859a-8824a3d1648e" class="bulleted-list"><li style="list-style-type:disc"><strong>Initial State:</strong> The starting position of the squirrel.</li></ul><figure id="62689a2a-3166-467b-b22a-4b112a3da1f0" class="image"><a href="Untitled%201.png"><img style="width:437px" src="Untitled%201.png"/></a></figure><ul id="562c06fb-48f5-4ffb-bac2-9c26ae634833" class="bulleted-list"><li style="list-style-type:disc"><strong>Going Out of the Grid State:</strong> The squirrel tries to leave the environment, indicating an attempt to move beyond the grid boundaries.</li></ul><figure id="7eb72783-6b72-4e8a-b623-aa718f13c19e" class="image"><a href="Untitled%202.png"><img style="width:437px" src="Untitled%202.png"/></a></figure><ul id="d74012d5-6290-4845-9b31-1ff338550479" class="bulleted-list"><li style="list-style-type:disc"><strong>Normal State:</strong> The squirrel wanders around without receiving any reward, nor is it caught by the hunter or reaching home.</li></ul><figure id="49e037c6-7373-458c-976d-c9b129f116b0" class="image"><a href="Untitled%203.png"><img style="width:437px" src="Untitled%203.png"/></a></figure><ul id="4a46affe-3ace-4bb2-abd0-8d77ddf7776a" class="bulleted-list"><li style="list-style-type:disc"><strong>Acorn Pickup State:</strong> The squirrel finds an acorn and consumes it, earning a reward for this action.</li></ul><figure id="6cbb11ff-c6f1-4cb0-ada6-eaa15349e50e" class="image"><a href="Untitled%204.png"><img style="width:437px" src="Untitled%204.png"/></a></figure><ul id="19728316-bf48-4b30-8f9d-538e2e7e3b98" class="bulleted-list"><li style="list-style-type:disc"><strong>Encounter with Hunter State:</strong> The squirrel is caught by the hunter, representing a negative outcome.</li></ul><figure id="fc503e97-e093-48ba-8bba-53f978494401" class="image"><a href="Untitled%205.png"><img style="width:437px" src="Untitled%205.png"/></a></figure><ul id="48ccc190-e66e-491a-a26e-eec4a8b37f07" class="bulleted-list"><li style="list-style-type:disc"><strong>Goal State:</strong> The final state where the squirrel successfully reaches its home, achieving its primary objective.</li></ul><figure id="8acd5600-8d4d-4c31-bde3-055e97712f67" class="image"><a href="Untitled%206.png"><img style="width:437px" src="Untitled%206.png"/></a></figure><h2 id="82d5d73b-0fef-40c3-b738-237171e7d221" class="">1.1 Deterministic Environment: <code>class SquirrelPet(gym.Env)</code></h2><p id="f54e07e1-0fe2-4ea8-9cc3-66a86c130f63" class=""><strong>Main Characteristics:</strong></p><ul id="cb348a99-e6ba-437c-accd-516dd67e2b5a" class="bulleted-list"><li style="list-style-type:disc"><strong>State Space:</strong> A 4x4 grid with discrete states.</li></ul><ul id="56ec7968-12f8-4e8d-bed6-aa2e826461e2" class="bulleted-list"><li style="list-style-type:disc"><strong>Action Space:</strong> Four actions (left, right, down, up).</li></ul><ul id="2ee1e9a8-3f27-4e8b-8034-f79b567b613a" class="bulleted-list"><li style="list-style-type:disc"><strong>Rewards:</strong> Collecting acorns grants rewards of 50 and 80, while encountering hunters incurs penalties of -20 and -50. Reaching the goal location grants a reward of 10. Each step towards the goal could potentially earn a reward of 10. However, the exact reward depends on whether each<br/>step objectively decreases the distance to the goal. [-10] for moving away to goal.<br/></li></ul><ul id="407c4661-3dd9-4eb7-87bd-19d516698da8" class="bulleted-list"><li style="list-style-type:disc"><strong>Objective:</strong> Maximize reward by collecting acorns, avoiding hunters, and reaching the goal location.</li></ul><ul id="b2a84909-1ba0-4d3b-94fe-832c858eb054" class="bulleted-list"><li style="list-style-type:disc"><strong>Behavior:</strong> Agent&#x27;s movements are deterministic, meaning the outcome of an action is predictable and consistent.</li></ul><p id="815cee83-675f-497a-a1b4-dee025ab2843" class=""><strong>Key Features:</strong></p><ul id="9aafc8fb-ba35-4d2e-bf97-d6dd4b35cea4" class="bulleted-list"><li style="list-style-type:disc">The environment utilizes fixed probabilities for action outcomes (100% chance of the action leading to the intended result).</li></ul><ul id="2ae6c4d4-e79a-4f60-a114-e61ad936d1ad" class="bulleted-list"><li style="list-style-type:disc">The agent has a set number of timesteps to achieve its objective, with the environment resetting after reaching the maximum timesteps or the goal.</li></ul><h2 id="d95c0473-ad0a-4f4a-86c5-0c7fa8c8a0e4" class="">1.2 Stochastic Environment: <code>class SquirrelPet_stoch(gym.Env)</code></h2><p id="802e0cdf-8dea-40cb-bb90-e50276d4b9d6" class=""><strong>Main Characteristics:</strong></p><ul id="4153a5c1-60d8-44c8-92b1-f269c0313ac1" class="bulleted-list"><li style="list-style-type:disc">Similar state space, action space, and objective as the deterministic version.</li></ul><ul id="2b7d0bb6-4692-4916-adae-9a0d9fe3f63f" class="bulleted-list"><li style="list-style-type:disc">Introduces randomness in action outcomes, making it a stochastic environment.</li></ul><p id="f892f479-28d0-47ef-a10c-e7a804cb5c46" class=""><strong>Key Features:</strong></p><ul id="7d76114b-638c-45a4-aad5-e0880fc9b26d" class="bulleted-list"><li style="list-style-type:disc"><strong>Action Probabilities:</strong> The actual action taken by the agent is determined by a probability distribution, where each intended action has a 70% chance of being executed and a 10% chance of any other action occurring instead. This simulates real-world uncertainty where actions might not always lead to expected outcomes.</li></ul><ul id="79b98316-9979-472e-b980-e12f7264cfd9" class="bulleted-list"><li style="list-style-type:disc"><strong>Randomness:</strong> Incorporates uncertainty and unpredictability into the agent&#x27;s navigation, requiring strategies that account for varied outcomes.</li></ul><p id="1326d4eb-7955-4560-b71e-6020a259e537" class=""><strong>The Difference:</strong></p><p id="f0e10fb0-5a7c-4a80-adc9-f305353ee697" class="">Let&#x27;s delve into the distinction between deterministic and stochastic environments in our setup, highlighting the outcomes of specific actions. First, it&#x27;s important to clarify the action labels used in our environment: &#x27;0&#x27; corresponds to moving right, &#x27;1&#x27; to moving left, &#x27;2&#x27; to moving up, and &#x27;3&#x27; to moving down.</p><div id="bd7cb3e9-1662-4c74-97a3-2e7fd2af00c0" class="column-list"><div id="6941acbf-c999-4cbe-aa30-19cff51b0387" style="width:43.75%" class="column"><p id="0e1e16c6-4492-4d7f-aeb6-a05c7d8837c3" class="">In a <strong>deterministic environment</strong>, the outcome of any action taken by the agent is predictable and certain. For example, consider the action labeled &#x27;0&#x27;, which instructs the agent to move right. As illustrated in the figure below, when the agent chooses action &#x27;0&#x27;, it moves right, aligning perfectly with the expected outcome. If moving right brings the agent closer to its goal (home), it receives a reward of 10, acknowledging its progress towards the objective.</p></div><div id="ccceecc2-1071-4a18-b97d-61b66173e92e" style="width:56.25%" class="column"><figure id="32888267-6489-43ca-aa03-281cd991a280" class="image"><a href="Untitled%207.png"><img style="width:528px" src="Untitled%207.png"/></a></figure></div></div><div id="f6fda3a3-b847-4326-90c0-1c5f8cf778e3" class="column-list"><div id="e8f83226-e484-41db-b609-17c1e13cc0d7" style="width:43.75%" class="column"><p id="ef734ec0-088e-4af3-b80b-0a5ae297448c" class="">Contrastingly, the s<strong>tochastic environment</strong> introduces an element of unpredictability into the agent&#x27;s actions. Although the agent may intend to perform a specific action, such as &#x27;0&#x27; to move right, the actual outcome is subject to randomness due to the environment&#x27;s inherent uncertainty. In this scenario, each intended action has a 70% chance of being executed as planned and a 10% chance for any other action to occur instead.</p></div><div id="32c92fa3-09cb-49ea-9353-631ac803463f" style="width:56.25%" class="column"><figure id="60355e3c-dba2-4a24-9483-c3df32451b90" class="image"><a href="Untitled%207.png"><img src="Untitled%207.png"/></a></figure></div></div><p id="ce6420b9-3f86-4519-9024-fd7d80228284" class="">For instance, as shown in the below figure, when the agent selects action &#x27;0&#x27; with the intention to move right, the stochastic nature of the environment might lead to a different outcome. Due to the introduced randomness, the agent might end up performing action &#x27;2&#x27;, which results in it moving up instead of right. This deviation from the expected outcome illustrates the key characteristic of stochastic environments – the uncertainty and unpredictability in the actions&#x27; results.</p><h2 id="3b433246-11e3-4742-ba8e-1df21b671525" class="">Safety in AI</h2><p id="9a3a6a01-860b-4e1b-8a4b-8cc01750457a" class="">The <code>SquirrelPet</code> environment implements several measures to ensure safety and maintain defined operational boundaries within its state-space:</p><ol type="1" id="43966b54-ce05-41a4-b9b9-3322e789639f" class="numbered-list" start="1"><li><strong>Discrete Action and Observation Spaces:</strong> The environment defines its observation space (<code>obs_space</code>) and action space (<code>action_space</code>) using discrete spaces, limiting the agent to a finite set of actions and states. This constraint ensures the agent&#x27;s actions are predictable and manageable within the defined state-space.</li></ol><ol type="1" id="626135f1-7dd8-418f-8195-2808b1151d95" class="numbered-list" start="2"><li><strong>Boundary Checki:</strong> The agent&#x27;s movement is constrained within the grid boundaries by clipping its position (<code>np.clip(self.myagent, 0, 3)</code>). This prevents the agent from moving outside the defined grid, ensuring it navigates within the allowed state-space.</li></ol><ol type="1" id="a8868a31-0d01-4524-8838-672c9d1bac61" class="numbered-list" start="3"><li><strong>Penalty and Reward System:</strong> The environment has a system of rewards and penalties based on the agent&#x27;s interactions with objects within the grid (e.g., acorns, hunters, goal location). </li></ol><ol type="1" id="8b340b7d-1481-4fb6-bcc4-a3e1816bbb1b" class="numbered-list" start="4"><li><strong>State and Action Validation:</strong> The environment checks if the agent remains stationary or attempts to revisit a previously visited state, prompting a change in action if necessary. This mechanism prevents the agent from engaging in futile or potentially unsafe actions.</li></ol><ol type="1" id="2a99435e-bc74-4db6-bd6d-6a0ddb7bc52c" class="numbered-list" start="5"><li><strong>Termination and Truncation Conditions:</strong> The environment implements conditions for termination (<code>terminated</code>) and truncation (<code>truncated</code>), ensuring the agent&#x27;s episode ends either upon reaching the goal, encountering a penalty condition, or exceeding the maximum number of timesteps. This prevents the agent from continuing in potentially unsafe or undefined states.</li></ol><p id="8f2bc56f-9668-4eae-a1db-30f27954721b" class="">These measures ensure that the agent operates safely within the environment, adhering to defined rules and boundaries, and making decisions that lead to safe outcomes.</p><p id="a34a43d6-05de-456a-bd06-f48e13133d00" class="">
+</p><h1 id="e70d4c12-f353-454b-a1a6-71cf2a45b678" class="">PART 2 - Applying Tabular Methods</h1><h2 id="3dd7acda-b3fb-49de-ae81-f7c1182e7576" class="">Q-Learning - Deterministic</h2><h3 id="6f23aa07-f922-4d31-b49f-a70f6a57a325" class="">Initial Setup and Parameters</h3><ul id="ae9b4fcf-1558-42fc-8443-8a36bc2a520b" class="bulleted-list"><li style="list-style-type:disc"><strong>Exploration Rate (Epsilon):</strong> Begins at 1.0, allowing for full exploration, and decays to a minimum of 0.01 to encourage exploitation of learned behaviors.</li></ul><ul id="7a8e5a2c-8a6a-474a-8f90-65939b861108" class="bulleted-list"><li style="list-style-type:disc"><strong>Learning Rate (Alpha):</strong> Set at 0.15, dictating the rate at which new information overrides old information.</li></ul><ul id="32c6647f-bba8-4a5b-afc6-2399c509e1d0" class="bulleted-list"><li style="list-style-type:disc"><strong>Discount Factor (Gamma):</strong> At 0.95, it influences the importance of future rewards.</li></ul><ul id="06091cbe-1440-4902-b4e6-f0bd4455f57f" class="bulleted-list"><li style="list-style-type:disc"><strong>Decay Rate:</strong> Adjusted by 0.995 after each episode, gradually reducing epsilon to shift from exploration to exploitation.</li></ul><ul id="2c930a9a-de49-4509-967b-725700bf1947" class="bulleted-list"><li style="list-style-type:disc"><strong>Total Episodes:</strong> The learning process spans 1000 episodes, with a maximum of 10 timesteps each.</li></ul><p id="cd1075d5-ffc6-4fbf-abc5-e34aca330ef7" class=""><strong>Q-table after 1000 episodes:</strong></p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="df30ea90-76da-4a5b-9339-24eaf661bb77" class="code"><code class="language-JavaScript">
+Episode: 1000
+Q-table:
+[[702.78546141 735.38148183 759.33519153 734.90640895]
+ [803.62897    728.31917969 670.51499993 694.96044495]
+ [394.17456029 417.95738749 765.48491079 529.10554141]
+ [  0.           0.           0.           0.        ]
+ [360.19811203 431.26045707 800.34327107 348.24060199]
+ [  0.           0.           0.           0.        ]
+ [698.64932936 701.67548831 715.90739337 801.9729527 ]
+ [ 93.24628619 759.4693669  305.49917348 307.36816022]
+ [129.2931932  592.96311953 254.48080279 183.16562562]
+ [361.80741793 798.11936106 537.19198502 309.55012467]
+ [  0.           0.           0.           0.        ]
+ [709.40974314 157.05852912 108.23966958  50.43468215]
+ [  0.           0.           0.           0.        ]
+ [  1.28848026 526.52970472  14.7211199   53.4404678 ]
+ [  1.47124737 408.01027657  23.33481605  19.34677054]
+ [  0.           0.           0.           0.        ]]
+Average Penalties in Last 100 Episodes: 0.02
+Episode: 1000, Average Steps: 9.98</code></pre><p id="58dc5db0-bb32-4ec1-9214-f4ced826f8df" class=""><strong>Rewards/Episode Graph:</strong></p><p id="60749f98-6157-4bd7-a3ba-279036c67cb4" class="">The graph &quot;Total Reward The Agent Receive Per Episode&quot; shows the performance of an agent over 1000 episodes. Initially, the agent&#x27;s rewards vary greatly but show a clear trend of improvement as episodes continue. By the end of the training, the rewards level out at higher values, suggesting that the agent has learned an effective strategy. Occasional dips in rewards hint at some remaining challenges, possibly due to exploration or environmental randomness.</p><figure id="6b535d45-c9f0-4d2f-8aed-e40f578658fa" class="image"><a href="Untitled%208.png"><img style="width:707.984375px" src="Untitled%208.png"/></a></figure><p id="e6869cff-0adf-4c42-a0b6-7be6e196db0b" class=""><strong>Epsilon Decay Graph:</strong></p><p id="db2456cc-4002-4f6c-91dd-542cc0cd474f" class="">Here the episilon decay graph It starts at a high value of 0.99, signifying a strong preference for exploration at the beginning of the learning process. As the number of episodes increases, epsilon gradually decays following a predefined rate, reaching a final low value of 0.01.</p><figure id="f7f260c9-c93c-46de-bfa5-5addfa0890b9" class="image"><a href="Untitled%209.png"><img style="width:707.984375px" src="Untitled%209.png"/></a></figure><p id="ea25ac05-6d6e-4fb1-9cab-6cb1c0e0fd30" class=""><strong>Total Rewards per episode graph</strong></p><p id="3e6b18f3-192a-482e-ad2f-0d8a58cfaeec" class="">Here we ran the agent in environment for at 10 episodes, where the agent chooses only greedy actions from the learned policy. For an agent operating under a greedy policy, where it always chooses the action that it believes has the highest value based on its learned Q-table.</p><figure id="9e9a5688-b803-43ef-bb23-bd749ecc25ba" class="image"><a href="Untitled%2010.png"><img style="width:707.96875px" src="Untitled%2010.png"/></a></figure><p id="d571482a-a081-4728-a338-44b01961a1ce" class=""><strong>Experimenting with various hyperparameters:</strong></p><p id="4e9c88af-942f-481d-898f-8ad545dcb84f" class="">Hyperparameter Variations:</p><ul id="2a339b13-81a2-416d-9829-f6dedc01909b" class="bulleted-list"><li style="list-style-type:disc"><code><strong>max_timestamp_values</strong></code>: Tested with 12, 15, and 20 to understand how longer episodes affect learning.</li></ul><ul id="2ec31919-c74b-4fa5-b07e-7b41e5fa4bb3" class="bulleted-list"><li style="list-style-type:disc"><code><strong>decay_val</strong></code>: Examined decay values of 0.500, 0.750, and 0.995 to see how a slower or faster reduction in exploration impacts the agent&#x27;s performance.</li></ul><p id="52edfeb2-4928-4627-84fa-b2b8a37e5632" class=""><strong>Outcomes:</strong></p><ul id="b92ec9ed-f782-4e2f-844d-4d067dfdeb5f" class="bulleted-list"><li style="list-style-type:disc"><strong>Max Timestamp and Decay Rate at 12, 0.5:</strong> The agent showed a relatively conservative learning curve, as indicated by the Q-table values. The rewards per episode were moderate, suggesting that the learning process may benefit from more exploration or longer episodes to acquire sufficient knowledge of the environment.</li></ul><ul id="551174da-58f8-447b-8290-117113d52c0a" class="bulleted-list"><li style="list-style-type:disc"><strong>Max Timestamp and Decay Rate at 12, 0.75 and 12, 0.995:</strong> Both scenarios produced higher rewards per episode, demonstrating that the agent was able to learn more effectively with a slower decay rate, allowing more exploration before settling into an exploitation strategy.</li></ul><ul id="d57134d0-5634-4a03-93d4-a6e3e566df88" class="bulleted-list"><li style="list-style-type:disc"><strong>Max Timestamp at 15, Decay Rate at 0.5 and 0.75:</strong> With more time per episode, the agent had additional opportunities to explore and learn from the environment. The resulting Q-tables and rewards per episode indicate improved learning outcomes.</li></ul><ul id="ea1df0bf-2730-4595-b338-9a29ecc9006e" class="bulleted-list"><li style="list-style-type:disc"><strong>Max Timestamp at 20, Decay Rate at 0.5, 0.75, and 0.995:</strong> Extending the maximum timestamp further facilitated the agent&#x27;s ability to learn, as shown by the increased rewards. Interestingly, the decay rate did not drastically alter the rewards, suggesting that the increase in maximum timesteps provided a substantial benefit by itself.</li></ul><p id="977a5bd8-c58b-45b7-ba8e-2dbaf86a99ef" class=""><strong>Key Insights:</strong></p><ul id="04977918-3bb3-4eeb-8a89-62ea30ac7530" class="bulleted-list"><li style="list-style-type:disc">The increase in maximum timesteps generally led to better learning outcomes, as the agent had more opportunities within each episode to explore the state-action space.</li></ul><ul id="b12a5620-72e4-4aec-9918-6eb3f8190642" class="bulleted-list"><li style="list-style-type:disc">A slower decay rate of epsilon allowed for a more gradual shift from exploration to exploitation, which proved beneficial in environments where the agent initially had limited knowledge.</li></ul><ul id="e7cb4983-a7e7-4d7d-a9bb-4fef220b6c27" class="bulleted-list"><li style="list-style-type:disc">Consistently high rewards across different decay rates, with an increased maximum timestamp, highlight the importance of allowing the agent sufficient time to interact with the environment for effective learning.</li></ul><p id="8fe15553-d228-4bc1-9485-f57a79ff1bfe" class="">So, importance of tuning hyperparameters to balance exploration and exploitation in reinforcement learning and shows how extending the time allowed for each episode can significantly enhance the agent&#x27;s ability to learn.</p><h3 id="3e24013e-dc63-4598-ac6b-5a27c7aca36f" class="">Base Model Evaluation</h3><ul id="10f6f87f-c2fd-49e3-a986-f9216cfae4ce" class="bulleted-list"><li style="list-style-type:disc"><strong>Trained Q-Table:</strong> Shows significant learning with substantial values.</li></ul><ul id="f53708c6-f7d3-4991-8ada-30e034eb82f7" class="bulleted-list"><li style="list-style-type:disc"><strong>Reward:</strong> Consistent and increasing, indicating effective learning.</li></ul><h3 id="323213a2-7f01-4403-a6ee-39fd1cdc397c" class="">Hyperparameter #1: Max Timestamp Values</h3><ul id="845a34ae-6269-4bf9-b44e-884d47e39e98" class="bulleted-list"><li style="list-style-type:disc"><strong>12 Timesteps:</strong><ul id="adcec29c-e626-4560-a8b4-2af6f9691d72" class="bulleted-list"><li style="list-style-type:circle"><strong>Reward:</strong> Lower at 115, suggesting limited learning opportunities.</li></ul></li></ul><ul id="b946862d-507f-4d87-961f-874e4e16d67d" class="bulleted-list"><li style="list-style-type:disc"><strong>15 Timesteps:</strong><ul id="69fcd26f-4858-4a30-99a0-1848935f1908" class="bulleted-list"><li style="list-style-type:circle"><strong>Reward:</strong> Increase to 465, indicating improved learning with more opportunities to act. Better than 12 but still room for improvement.</li></ul></li></ul><ul id="92ed0b9a-739f-4925-955c-9d8eb377b5eb" class="bulleted-list"><li style="list-style-type:disc"><strong>20 Timesteps:</strong><ul id="0bac2da5-585f-4638-aab3-d42b2db85dca" class="bulleted-list"><li style="list-style-type:circle"><strong>Reward:</strong> Further increased to 765, suggesting ample time for the agent to learn and collect rewards. The most efficient in this category, providing a balance between time and reward.</li></ul></li></ul><h3 id="ca65fc75-55d9-415b-a105-b0394f3f5e9d" class="">Hyperparameter #2: Decay Rate</h3><ul id="cd47fe88-da89-483e-990f-3472c9c2c681" class="bulleted-list"><li style="list-style-type:disc"><strong>0.5 Decay Rate:</strong><ul id="0c4f4065-e684-4b06-bf75-5fb1d011d238" class="bulleted-list"><li style="list-style-type:circle"><strong>Reward:</strong> A consistent 115 across all max timestamp settings, which may indicate rapid loss of exploration and premature convergence.</li></ul></li></ul><ul id="f2fe8549-a5dd-424a-8613-da1a79eb2d63" class="bulleted-list"><li style="list-style-type:disc"><strong>0.75 Decay Rate:</strong><ul id="61093080-c53e-419e-8765-1e0e3a8465ee" class="bulleted-list"><li style="list-style-type:circle"><strong>Reward:</strong> Consistent 465 across 12 and 15 max timestamps, with an increase to 670 at 20 max timestamps, indicating a better balance between exploration and exploitation. More effective than 0.5, allowing for more exploration.</li></ul></li></ul><ul id="387aaed9-e609-422b-b4d3-b25e5df6c604" class="bulleted-list"><li style="list-style-type:disc"><strong>0.995 Decay Rate:</strong><ul id="a94e4d1d-1852-4a5c-ba11-a945daf06be6" class="bulleted-list"><li style="list-style-type:circle"><strong>Reward:</strong> Consistently high at 765 across all max timestamp settings, indicating sustained exploration leading to a robust policy. The most effective decay rate, maintaining a balance between exploration and exploitation throughout learning.</li></ul></li></ul><h3 id="2886da10-2352-4ed9-ade9-4b8b0207322b" class="">Overall Efficient values</h3><p id="69a1f042-1606-4d55-8111-8ae1c515641d" class="">The most efficient hyperparameter values for this problem setup seem to be 20 max timestamps with a 0.995 decay rate. This combination allows the agent ample opportunity to explore and exploit the environment, leading to a higher and more stable reward. However, it&#x27;s essential to consider the trade-offs between learning speed and robustness of the learned policy. Further fine-tuning and validation in different environment settings may be needed to confirm these suggestions.</p><h2 id="0d9fd330-52de-4c7e-85b2-56ab60f4f6e3" class="">Q-Learning - Stochastic</h2><p id="fb952278-a23c-40c5-8e7c-78f2bf17e81a" class="">The analysis of Q-learning applied to the <code>SquirrelPet_stoch</code> environment with stochastic elements is as follows:</p><h3 id="316d3fad-99bd-4972-8926-cea99b103c95" class="">Initial Setup and Parameters</h3><ul id="a5f004e6-6abe-49f3-941b-c01f5f48cb75" class="bulleted-list"><li style="list-style-type:disc">The initial exploration rate (epsilon) starts at 1.0, allowing the agent to explore the environment fully initially.</li></ul><ul id="1e086fab-e79a-4862-bf9e-c861797e6376" class="bulleted-list"><li style="list-style-type:disc">The minimum exploration rate is set at 0.01, ensuring that even at the end of learning, there is still a small chance of random actions for exploration.</li></ul><ul id="aaa31444-d196-4f40-8dcd-59ca0fd5a146" class="bulleted-list"><li style="list-style-type:disc">The discount factor (gamma) is 0.95, which emphasizes the importance of future rewards but not too far into the future.</li></ul><ul id="346e8b16-e08b-4576-9bcc-56df3bf37cc8" class="bulleted-list"><li style="list-style-type:disc">The learning rate (alpha) is 0.15, balancing between the new knowledge and old knowledge.</li></ul><ul id="fa46f8a0-b988-487f-80ae-73e2ec08bc7b" class="bulleted-list"><li style="list-style-type:disc">The epsilon decay rate is set at 0.995, indicating a slow reduction in exploration as learning progresses.</li></ul><p id="27d6c9b8-4ca2-4a25-aeb2-c5c920e4c332" class=""><strong>Learning Process:</strong><div class="indented"><ul id="8e02a2de-95f4-4231-9843-774ef0c3dfed" class="bulleted-list"><li style="list-style-type:disc">Over 1000 episodes, the agent&#x27;s ability to accumulate rewards and minimize penalties improves, as shown by the Q-table values and the average penalties.</li></ul><ul id="e1b3a506-61b1-440c-a389-24864643da2d" class="bulleted-list"><li style="list-style-type:disc">The agent&#x27;s actions, when compared to the requested actions, show a degree of variability, which is expected in a stochastic environment. This implies that even with the correct policy, the outcome may not always be predictable, simulating real-world uncertainty.</li></ul><figure id="dfa1e8a0-c94a-4695-89b8-a22925ac632a" class="image"><a href="Untitled%2011.png"><img style="width:683.984375px" src="Untitled%2011.png"/></a></figure><p id="321882ae-ac33-4210-a8d0-3735355241b5" class=""><strong>Q-table after 1000 episodes:</strong></p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="705302b3-32a3-4415-9bfa-33986e867673" class="code"><code class="language-JavaScript">Trained Q-table:
+[[481.12347176 482.44245657 509.55412894 481.18577312]
+ [583.52366303 489.9892792  488.2512628  442.35127078]
+ [387.57068532 254.66866404 556.10805635 319.50275825]
+ [  0.           0.           0.           0.        ]
+ [349.92415802 407.40990848 563.03685045 430.65058569]
+ [  0.           0.           0.           0.        ]
+ [461.86224667 461.20016042 468.76609861 548.4724644 ]
+ [119.13866406 541.29739567 278.6033686  301.15111247]
+ [163.42667306 503.65299535 169.41944791 228.55866233]
+ [212.95691342 519.77710979 260.96415249 327.99890918]
+ [  0.           0.           0.           0.        ]
+ [125.50918784 485.56316898  23.97898748 175.16160409]
+ [  0.           0.           0.           0.        ]
+ [ 26.01136036 153.12657016 418.13021717  60.84741138]
+ [127.62252295  71.22172256 464.40615454  25.36807645]
+ [  0.           0.           0.           0.        ]]</code></pre><p id="bba71a47-c38c-4d6d-98f8-bf3b34faa856" class=""><strong>Rewards per Episode (Greedy Policy) Graph:</strong><div class="indented"><ul id="a95e068a-249d-4459-9e79-a6a0274cc433" class="bulleted-list"><li style="list-style-type:disc">This graph plots the total rewards received per episode when using a greedy policy.</li></ul><ul id="09f531ad-b402-4e62-8cfa-3f31a2e13c10" class="bulleted-list"><li style="list-style-type:disc">From the graph, it appears there is significant variability in rewards between episodes, indicating that the performance of the agent can fluctuate greatly from one episode to the next due to the introduction of stochastic environment.</li></ul><figure id="7fce5f3d-601f-484c-b07f-4bc976e49845" class="image"><a href="Untitled%2012.png"><img style="width:659.984375px" src="Untitled%2012.png"/></a></figure></div></p><p id="3212461c-ab0e-4132-8b09-ede94fb83bab" class=""><strong>Epsilon Decay Graph:</strong><div class="indented"><ul id="4f954c8c-49ec-4f43-8535-515b1e5f2578" class="bulleted-list"><li style="list-style-type:disc">It starts at 0.99 (almost always choosing a random action) and decays to 0.01 (almost always choosing the best-known action), following an exponential decay curve. This suggests that as the agent learns more about the environment, it relies less on random exploration and more on its learned experiences.</li></ul><figure id="072f86ec-36b8-49ed-8217-8bdd32d1fea1" class="image"><a href="Untitled%2013.png"><img style="width:659.984375px" src="Untitled%2013.png"/></a></figure></div></p><p id="1aa61176-09a4-43f0-bf5c-1141745301e7" class=""><strong>Reward Episode Graph:</strong><div class="indented"><ul id="7d6881cd-49cc-4d1d-9bc9-2b9a33a9e0a0" class="bulleted-list"><li style="list-style-type:disc">This graph shows the total rewards received by the agent for each of 1000 episodes.</li></ul><ul id="17a47a7c-2110-44bb-8db4-cc893cd00ad4" class="bulleted-list"><li style="list-style-type:disc">It exhibits a pattern where initially the rewards vary greatly, with some dips below zero, indicating the agent might be exploring the environment and occasionally choosing suboptimal actions.</li></ul><ul id="089d4f4c-7164-4e8d-a99b-ba1a02c7f4cf" class="bulleted-list"><li style="list-style-type:disc">Over time, the variability in rewards seems to decrease, and the overall trend appears to be stabilizing. However, there are still fluctuations, suggesting the agent continues to explore to some extent, which is typical behavior in a learning phase to avoid local maxima.</li></ul></div></p><figure id="94cfa207-4764-427a-9d29-d6d1e1364b08" class="image"><a href="Untitled%2014.png"><img style="width:683.96875px" src="Untitled%2014.png"/></a></figure><h3 id="0e91fb7e-ebd6-4bac-bbe3-c3597926e866" class="">Tuning Hyperparameters </h3><p id="52d92325-4fb7-4022-bfc3-edf6f74d04cd" class="">To evaluate the results of the Q-learning agent&#x27;s performance with different hyperparameter values, we will consider the following aspects:</p><p id="12df4b75-30dd-44d1-a0bb-2f6edb7e8281" class=""><strong>1st Variation:</strong></p><ul id="7b85cc13-0db9-416e-9dd7-9e7dac366b0d" class="bulleted-list"><li style="list-style-type:disc"><strong>12, 0.5</strong>: The Q-table shows moderate learned values, and the reward is 300. A faster decay (0.5) may have led the agent to exploit early without sufficient exploration.</li></ul><ul id="26245f3f-34d4-45ff-b134-91d1d9e91e6c" class="bulleted-list"><li style="list-style-type:disc"><strong>12, 0.75</strong>: Slightly higher Q-values are learned, with a reward of 335. A slower decay rate has potentially allowed for better exploration before exploitation.</li></ul><ul id="4d62c40a-8ba3-4b3c-a686-912eeeed195d" class="bulleted-list"><li style="list-style-type:disc"><strong>12, 0.995</strong>: This shows high Q-values with a reward of 465. A very slow decay rate likely allowed for extensive exploration, leading to a better-informed policy.</li></ul><p id="d3b1ab36-e7a0-410b-bbb9-ec7d665f4b5b" class=""><strong>2nd Variation:</strong></p><ul id="a4c49895-d010-426c-ab9a-14d7e45faaef" class="bulleted-list"><li style="list-style-type:disc"><strong>15, 0.5</strong>: The Q-values are lower with a corresponding reward of 35, indicating that the agent might be converging too quickly to a suboptimal policy.</li></ul><ul id="f5bac6f4-74ee-4280-9765-af7422a2c396" class="bulleted-list"><li style="list-style-type:disc"><strong>15, 0.75</strong>: The Q-values and reward (455) are higher, suggesting a balance between exploration and exploitation.</li></ul><ul id="7273a265-b937-490b-b8bb-d5915255b98b" class="bulleted-list"><li style="list-style-type:disc"><strong>15, 0.995</strong>: The highest Q-values and reward (535) suggest that the agent had ample opportunity to explore and has likely learned a good policy.</li></ul><p id="ac6666e8-df70-4eed-880d-821fbb654cd7" class=""><strong>3rd Variation:</strong></p><ul id="08379029-4820-4b11-8641-e5d7804db8d2" class="bulleted-list"><li style="list-style-type:disc"><strong>20, 0.5</strong>: Lower Q-values and a negative reward of -40 suggest that the agent is not learning effectively, potentially due to too rapid convergence to a suboptimal policy.</li></ul><ul id="02d9fe27-5be6-4423-b75b-f073b140ffcc" class="bulleted-list"><li style="list-style-type:disc"><strong>20, 0.75</strong>: The highest reward of 575 with considerable Q-values suggests an effective balance between exploration and exploitation.</li></ul><ul id="a50c5328-50a0-46d1-a499-840060d0e93e" class="bulleted-list"><li style="list-style-type:disc"><strong>20, 0.995</strong>: Similar to the 15, 0.995 scenario, high Q-values and a reward of 465 indicate a well-explored policy, but not as high as the 20, 0.75 scenario.</li></ul><h3 id="b37b8c5d-c250-4fab-8069-0ba96ad6168b" class="">Overall Efficient values</h3><ul id="9675a29f-5032-494f-9f19-17366ade7d38" class="bulleted-list"><li style="list-style-type:disc">The combination of <strong>max_timestamp = 20</strong> and <strong>decay_rate = 0.75</strong> produced the highest reward, which suggests that it&#x27;s the most efficient set of hyperparameters among those tested. This setup likely provided a good balance between exploration and exploitation, allowing the agent to learn effectively over time.</li></ul></div></p><p id="a6621cf6-683e-424c-baec-e2e233e34506" class="">
+</p><h2 id="c77b0b41-641b-4c97-94c1-08f11861496d" class="">Double Q-Learning - Deterministic</h2><p id="39d3c299-26d3-48be-a04d-410adf0a9432" class=""><strong>Q-table after 1000 episodes:</strong></p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="7686aed0-7927-493b-92ca-9d9e9dc2d4e9" class="code"><code class="language-JavaScript">Trained Q-table 1:
+[[ 5.94336730e+02  7.27681493e+02  7.58497860e+02  6.64276585e+02]
+ [ 8.02266463e+02  5.58418720e+02  5.31337980e+02  5.84087011e+02]
+ [ 3.10388603e+02  1.62379631e+02  7.31896063e+02  3.45962596e+02]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [ 1.12625657e+02  1.48406094e+02  7.82928450e+02  1.50767497e+02]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [ 6.59685721e+02  6.45859724e+02  5.96202795e+02  8.01351973e+02]
+ [ 4.34489536e+01  7.06281368e+02  1.39643088e+02  2.91717288e+02]
+ [ 4.73655065e+01  2.26568498e+02  1.73220842e+01 -7.50000000e-01]
+ [ 4.63453563e+01  7.16061535e+02  2.91715636e+01  2.04009261e+01]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [ 6.53936197e+02  1.16912304e+00  4.44430199e+01  1.08211994e+02]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [ 2.37077580e+01  5.64836356e+00  1.50000000e+00  1.89343906e+02]
+ [ 0.00000000e+00  0.00000000e+00  1.36216309e+02 -2.09890078e+00]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]]
+Trained Q-table 2:
+[[ 6.35187353e+02  7.27714244e+02  7.58443551e+02  6.92557469e+02]
+ [ 8.01060638e+02  4.50721182e+02  4.82377152e+02  5.74043226e+02]
+ [ 1.20237807e+02  1.60862122e+02  7.45560871e+02  2.56634644e+02]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [ 1.00485930e+02  2.71481777e+02  7.48671018e+02  2.26507741e+02]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [ 6.80930775e+02  6.42264658e+02  5.33232515e+02  8.00662262e+02]
+ [ 3.85875000e+00  6.97711690e+02  1.02378410e+02  1.00492947e+02]
+ [ 0.00000000e+00  2.50212386e+02  2.07437365e+01  0.00000000e+00]
+ [ 2.40766222e+01  7.39878948e+02  2.47482021e+02  5.81229647e+00]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [ 6.20114016e+02  6.31017210e+01 -1.38750000e+00  1.71190275e+01]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [-5.36250000e-01  3.29374132e+01  1.01564626e+01  1.76107074e+02]
+ [ 0.00000000e+00  7.54617818e+01  1.86264262e+02 -5.16750937e+00]
+ [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]]</code></pre><p id="a4349414-296b-4958-afbb-b65ef4780485" class=""><strong>Rewards/Episode Graph:</strong></p><p id="b0e7020d-76aa-4fd6-9f8f-2daaa29b6f06" class="">Initially, the rewards exhibit significant variability, with some instances dropping to zero. However, as the number of episodes increases, the rewards become more consistent, predominantly stabilizing within the 200 to 400 range. This is in contrast to the early stages, where rewards could fluctuate dramatically from -150 in one episode to 400 in the subsequent one.</p><figure id="f37a5a19-6417-49d7-994c-4c65b3dfb885" class="image"><a href="Untitled%2015.png"><img style="width:707.984375px" src="Untitled%2015.png"/></a></figure><p id="f15c5144-25a6-4c35-8ddf-7679e0766f2d" class=""><strong>Epsilon Decay Graph:</strong></p><p id="74750e15-b111-4c7a-af99-48909dd30618" class="">The rate at which epsilon decreases is steep at the beginning and levels off as it approaches closer to 0. This suggests that most exploration and learning happen in the early episodes, and as the agent learns more about the environment, it relies more on its learned policy.</p><figure id="adf61359-0650-4196-9c99-f2e235cb3534" class="image"><a href="Untitled%2016.png"><img style="width:707.984375px" src="Untitled%2016.png"/></a></figure><p id="dd0a9ad7-3e58-4fee-b68c-3ea12f480948" class=""><strong>Total Rewards per episode graph</strong></p><p id="f2ebf8f1-a92e-40e2-a619-d36225809cbd" class="">The graph depicts a consistent reward pattern per episode under a greedy policy, indicating minimal fluctuation and a steady performance.</p><figure id="9c33dfb4-eb89-4db9-9497-e4d32c5508f7" class="image"><a href="Untitled%2017.png"><img style="width:707.96875px" src="Untitled%2017.png"/></a></figure><h2 id="d1263a2f-8c7b-478a-93a6-0b1e01faedf9" class="">Double Q-Learning - Stochastic</h2><p id="48cbe2f6-baa9-4166-a51e-83e78d9586f7" class=""><strong>Q-table after 1000 episodes:</strong></p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="6ce00436-48fc-4e3b-85a0-13722defb525" class="code"><code class="language-JavaScript">Trained Q-table 1:
+[[386.81303978 413.63159117 506.30399958 413.69329661]
+ [549.62601773 240.81986472 344.2807137  295.4872256 ]
+ [181.93389696 176.44934643 513.28820835 218.23467822]
+ [  0.           0.           0.           0.        ]
+ [214.77483376 208.54035155 546.06640012 172.98449213]
+ [  0.           0.           0.           0.        ]
+ [325.94221185 318.77305363 278.51686092 524.68636901]
+ [ 15.88615047 517.13224896  53.26131381 123.86299758]
+ [ 11.6563695  416.28394928  69.04156304  12.36451457]
+ [ 20.01020168 506.85432024 106.32767553 111.86277466]
+ [  0.           0.           0.           0.        ]
+ [459.66809846   9.07706275 119.49608833 115.85767172]
+ [  0.           0.           0.           0.        ]
+ [  1.50517766  -2.58824843 212.10755783   2.80892206]
+ [ -0.87335579   2.52009498 332.89193094  -1.80311086]
+ [  0.           0.           0.           0.        ]]
+Trained Q-table 2:
+[[391.56068937 423.32567063 500.65156598 386.64436762]
+ [537.06808633 335.86948922 305.86701732 304.32574171]
+ [230.52513987 140.40827785 511.29318985 226.860051  ]
+ [  0.           0.           0.           0.        ]
+ [190.50539143 221.40900727 519.14047819 223.23793782]
+ [  0.           0.           0.           0.        ]
+ [341.86081939 293.46749465 253.83421042 541.23331081]
+ [ 13.95877347 502.92830275  79.27037245 130.23565051]
+ [-10.61275157 442.93660167  65.40849836   1.61334367]
+ [ 73.10859124 458.30997904  99.96329608  43.49579389]
+ [  0.           0.           0.           0.        ]
+ [462.59406392  32.68791365   5.98935534  60.33448491]
+ [  0.           0.           0.           0.        ]
+ [ -2.12709375  27.42950038 240.60078728   4.52675395]
+ [  4.67521499   0.         376.20848268   0.        ]
+ [  0.           0.           0.           0.        ]]</code></pre><p id="30b93a8c-c904-43fe-82e7-1d7e19002e79" class=""><strong>Rewards/Episode Graph:</strong></p><p id="e5fc6ea7-6ded-405c-9009-b0282ab92643" class="">The graph presented shows the total reward per episode over a series of 1000 episodes.  Initially, the rewards appear to be highly volatile, with values ranging from -300 to above 400, indicating that the agent&#x27;s performance varied significantly from episode to episode. Over time, while there&#x27;s still considerable fluctuation in the reward, there&#x27;s a noticeable consistency in the range of values, mostly staying within 100 to 300. This pattern suggests that as the number of episodes increases, the agent might be learning and improving its strategy, leading to a more stabilized performance with fewer instances of extremely low rewards. </p><figure id="e08aa23b-e3c8-4eac-9f79-2ca8bcbce68f" class="image"><a href="Untitled%2018.png"><img style="width:707.984375px" src="Untitled%2018.png"/></a></figure><p id="43ebf944-193c-48cc-abe3-57cbacf227b7" class=""><strong>Epsilon Decay Graph:</strong></p><p id="05a0c422-2ca3-403d-a851-6b2f33163d83" class="">The graph represents the decay of the epsilon value over 1000 episodes Initially, epsilon is high, close to 1.0, allowing the agent to explore a wide range of actions without strictly following a predetermined policy.  As the number of episodes increases, the epsilon value decays exponentially towards 0, suggesting that the agent is shifting from exploration to exploitation, relying more on the learned policy to make decisions. </p><figure id="7f00f912-b8e9-4997-b5dc-b36192a6384f" class="image"><a href="Untitled%2019.png"><img style="width:707.984375px" src="Untitled%2019.png"/></a></figure><p id="733e7970-1194-4ba1-98d0-717e31c32d3f" class=""><strong>Total Rewards per episode graph</strong></p><p id="7f531c12-db33-4817-84c5-faf0a017458d" class="">The graph indicates significant variability in the rewards received per episode, with peaks suggesting episodes where the agent&#x27;s chosen actions led to high rewards, while valleys represent episodes with much lower rewards. The peaks at episodes 2 and 6 indicate successful outcomes, possibly where the agent made optimal decisions based on its policy. Conversely, the sharp drop after episode 6 suggests an episode where the chosen actions did not result in a high reward, indicating a potential limitation or miscalculation in the policy&#x27;s effectiveness for that particular episode. </p><figure id="78b10d96-ee23-4f22-bff1-eb3f9d3a95b3" class="image"><a href="Untitled%2020.png"><img style="width:707.96875px" src="Untitled%2020.png"/></a></figure><p id="06f2ec2f-fced-44e4-82a5-1a7535aa6238" class="">
+</p><h2 id="1ef4dab3-b0fc-4a3b-ab77-13bcc71434db" class=""><strong>Summary</strong></h2><p id="6aab0619-43b6-41f3-bc03-80e79b84c64a" class="">Tabular methods, including Q-learning and Double Q-learning, are reinforcement learning techniques used for solving problems where the environment is modeled as a Markov Decision Process (MDP). In both methods, an agent interacts with an environment, receiving rewards for its actions and updating its knowledge (represented by a Q-table) accordingly.</p><p id="3f248f42-6202-454f-9824-5b7551b22ebe" class=""><strong>Q-learning:</strong></p><ul id="2ab81859-8e6c-4e2f-a469-6cb40cfbe1c8" class="bulleted-list"><li style="list-style-type:disc">Update Function: The Q-value for a state-action pair is updated using the equation: <strong><code>Q(s, a) = Q(s, a) + α * (reward + γ * max(Q(s&#x27;, a&#x27;)) - Q(s, a))</code></strong>, where Q(s, a) represents the Q-value for state-action pair (s, a), α is the learning rate, reward is the immediate reward received, γ is the discount factor, max(Q(s&#x27;, a&#x27;)) represents the maximum Q-value for the next state s&#x27;, and s&#x27; is the next state.</li></ul><p id="d2e59008-3ef1-42ce-8707-73e4f26dbff8" class=""><strong>Double Q-learning:</strong></p><ul id="fb30b663-d08a-44b6-b6da-eed939e1bfba" class="bulleted-list"><li style="list-style-type:disc">Update Function: Double Q-learning employs two Q-tables, denoted as Q1 and Q2. At each step, one Q-table is used to select the action, while the other Q-table is used to evaluate the chosen action. The Q-values are updated using the equation similar to Q-learning, but with alternating updates between Q1 and Q2 to reduce overestimation bias.</li></ul><p id="3c1d625f-46e6-4dca-af6b-1d4a13191ffa" class=""><strong>Criteria for a good reward function:</strong><br/>A good reward function should incentivize the agent to achieve the desired behavior or goals in the environment while avoiding unintended side effects. In our environment theare are some implementations that enourage the agent to take good actions by providing the rewards. <br/></p><ul id="c1b19c3d-1c3a-4350-9485-7d79fafbf668" class="bulleted-list"><li style="list-style-type:disc">The reward function should assigns rewards to actions that move the agent closer to achieving its objectives.</li></ul><ul id="fe7ab1a7-ae39-4c44-aa45-1c44afd71de2" class="bulleted-list"><li style="list-style-type:disc">There are multiple Rewards, so it can help the agent&#x27;s exploration and exploitation, encouraging it to discover valuable states and actions efficiently.</li></ul><p id="fbebea22-740b-4ca8-bd1f-b91db705698c" class="">
+</p><h2 id="2695060a-3223-4f30-a847-d8390e2561f0" class="">Overview</h2><p id="0d32a0b8-e88c-4081-a491-9f0c4d174c9b" class="">Here&#x27;s a neatly organized overview of the results obtained from various tabular methods for solving the squirrel maze environment:</p><table id="2035a388-d386-4c12-bac2-1dc3abb1148a" class="simple-table"><tbody><tr id="1434dd9b-ece9-4297-b6a4-e2809de8845d"><td id="TCvo" class="" style="width:92.5px">Algorithm</td><td id="@K}D" class="" style="width:92.5px">Environment</td><td id="R[sB" class="" style="width:92.5px">Model Variation</td><td id="ovA@" class="" style="width:92.5px">Max Reward (Episode)</td><td id="EVjD" class="" style="width:92.5px">Episode 1000 Reward</td><td id="lKR:" class="" style="width:92.5px">Epsilon Decay Trend</td></tr><tr id="be739ee4-9b3e-41b0-bfdc-1c56dceb51df"><td id="TCvo" class="" style="width:92.5px">Q-learning</td><td id="@K}D" class="" style="width:92.5px">Deterministic</td><td id="R[sB" class="" style="width:92.5px">Base Model</td><td id="ovA@" class="" style="width:92.5px">400+</td><td id="EVjD" class="" style="width:92.5px">390</td><td id="lKR:" class="" style="width:92.5px">Slow Decline</td></tr><tr id="66ed1f32-7515-444c-983c-6892a40cff32"><td id="TCvo" class="" style="width:92.5px">Q-learning</td><td id="@K}D" class="" style="width:92.5px">Deterministic</td><td id="R[sB" class="" style="width:92.5px">Hyperparameter Tuning (Max Timestamp, Decay Rate: 20, 0.75)</td><td id="ovA@" class="" style="width:92.5px">800+</td><td id="EVjD" class="" style="width:92.5px">765</td><td id="lKR:" class="" style="width:92.5px">Slow Decline</td></tr><tr id="27895857-bf19-4c2f-b97f-a91cf9e71ed4"><td id="TCvo" class="" style="width:92.5px">Q-learning</td><td id="@K}D" class="" style="width:92.5px">Deterministic</td><td id="R[sB" class="" style="width:92.5px">Hyperparameter Tuning (Max Timestamp, Decay Rate: 20, 0.995)</td><td id="ovA@" class="" style="width:92.5px">800+</td><td id="EVjD" class="" style="width:92.5px">765</td><td id="lKR:" class="" style="width:92.5px">Slow Decline</td></tr><tr id="de4fce0c-2e4a-4c28-a06a-a2244574c0f9"><td id="TCvo" class="" style="width:92.5px">Q-learning</td><td id="@K}D" class="" style="width:92.5px">Stochastic</td><td id="R[sB" class="" style="width:92.5px">Base Model</td><td id="ovA@" class="" style="width:92.5px">400+</td><td id="EVjD" class="" style="width:92.5px">305</td><td id="lKR:" class="" style="width:92.5px">Slow Decline</td></tr><tr id="73f139c9-10ee-49ae-9582-5c534455bc32"><td id="TCvo" class="" style="width:92.5px">Q-learning</td><td id="@K}D" class="" style="width:92.5px">Stochastic</td><td id="R[sB" class="" style="width:92.5px">Hyperparameter Tuning (Max Timestamp, Decay Rate: 20, 0.995)</td><td id="ovA@" class="" style="width:92.5px">800+</td><td id="EVjD" class="" style="width:92.5px">660</td><td id="lKR:" class="" style="width:92.5px">Slow Decline</td></tr><tr id="9c7dd20f-2459-4383-91fa-34fd0ed99328"><td id="TCvo" class="" style="width:92.5px">Double Q-learning</td><td id="@K}D" class="" style="width:92.5px">Deterministic</td><td id="R[sB" class="" style="width:92.5px">Base Model</td><td id="ovA@" class="" style="width:92.5px">400</td><td id="EVjD" class="" style="width:92.5px">-</td><td id="lKR:" class="" style="width:92.5px">-</td></tr><tr id="e1b848d5-2754-485e-94bf-c8e75a546a96"><td id="TCvo" class="" style="width:92.5px">Double Q-learning</td><td id="@K}D" class="" style="width:92.5px">Stochastic</td><td id="R[sB" class="" style="width:92.5px">Base Model</td><td id="ovA@" class="" style="width:92.5px">400+</td><td id="EVjD" class="" style="width:92.5px">-</td><td id="lKR:" class="" style="width:92.5px">-</td></tr></tbody></table><h1 id="d65f20f0-5200-411c-a65e-4ecdf8bdfaf5" class="">Part 3 - Solve Stock Trading Environment</h1><h2 id="f6e1a9ec-4bbd-4232-97e4-90645c21641d" class=""><strong>Stock Trading Environment Overview</strong></h2><ul id="84f72b7c-d6c1-4cb2-99cb-6253cfdcb8a0" class="bulleted-list"><li style="list-style-type:disc"><strong>Purpose</strong>: This environment helps agents learn how to trade stocks.</li></ul><ul id="e54e7b9e-2a15-462e-a737-2172f85d548c" class="bulleted-list"><li style="list-style-type:disc"><strong>Initialization</strong>:<ul id="6ce3ef3a-0f75-4092-aa01-cbd54116b3ee" class="bulleted-list"><li style="list-style-type:circle">Loads historical stock data.</li></ul><ul id="c2c3e880-1cad-4e77-b6cd-11177fab6561" class="bulleted-list"><li style="list-style-type:circle">Splits data into training and testing sets.</li></ul><ul id="508a2c39-1712-4fb8-b1f6-71afeefb9cce" class="bulleted-list"><li style="list-style-type:circle">Sets up various parameters like observation and action spaces, initial investment capital, etc.</li></ul></li></ul><ul id="96534c01-64d7-4232-aa15-d700c3516aeb" class="bulleted-list"><li style="list-style-type:disc"><strong>Reset</strong>:<ul id="bce75696-9829-49d7-8881-9bc0c5baf581" class="bulleted-list"><li style="list-style-type:circle">Returns environment to its starting state.</li></ul><ul id="4b030be0-c59b-4170-9f13-80a093ff4e8d" class="bulleted-list"><li style="list-style-type:circle">Calculates initial observation based on recent stock trends.</li></ul></li></ul><ul id="9d67d426-ac18-44e7-b2ce-5e924c48924a" class="bulleted-list"><li style="list-style-type:disc"><strong>Step</strong>:<ul id="b2b57799-d6b1-48d0-ad8b-2d6cd870cf4d" class="bulleted-list"><li style="list-style-type:circle">Agent takes actions to buy, sell, or hold stocks.</li></ul><ul id="2b029dc1-fac9-45eb-b0a2-e415342e5645" class="bulleted-list"><li style="list-style-type:circle">Rewards or penalties are given based on actions and market conditions.</li></ul></li></ul><ul id="121665b9-1853-43d8-9fc3-a11e71dda978" class="bulleted-list"><li style="list-style-type:disc"><strong>Render</strong>:<ul id="083d5fb0-e265-4afd-8ed9-6f03e5fd53c4" class="bulleted-list"><li style="list-style-type:circle">Visualizes total account value over time.</li></ul><ul id="6e4db5d1-d146-4e88-be46-939b8c85aad1" class="bulleted-list"><li style="list-style-type:circle">Helps in understanding agent&#x27;s performance.</li></ul></li></ul><h2 id="5d9f118b-1298-4777-83bd-c97edf8609a2" class=""><strong>Results of Applying Q-learning Algorithm</strong></h2><p id="3be5f5e1-e2da-44cf-8c93-3c58d298bc22" class=""><strong>Epsilon Decay</strong></p><ul id="fe59e287-5ba8-4892-a8c1-f24317acc777" class="bulleted-list"><li style="list-style-type:disc">The graph starts with an epsilon value of 0.99 and decreases to 0.01 over 1000 episodes. This suggests that the agent starts out exploring the environment randomly a lot, but over time it becomes more confident in its knowledge and takes random actions less often.</li></ul><ul id="e80783eb-e9c0-4c7e-bae9-c0e9ea66254e" class="bulleted-list"><li style="list-style-type:disc">The epsilon value appears to decay exponentially. This is a common way to set the epsilon value in reinforcement learning algorithms, as it allows the agent to explore more at the beginning of training when it knows less and then exploit its knowledge more as it learns.</li></ul><p id="0246e420-4b61-41d8-b78f-21c274fb30dc" class="">Overall, the graph suggests that the epsilon decay is working as expected. The agent is starting out exploring a lot and then becoming more exploitative as it learns more about the environment.</p><figure id="ed156b95-b3c4-4ca7-94c2-1752e0166d03" class="image"><a href="Untitled%2021.png"><img style="width:707.984375px" src="Untitled%2021.png"/></a></figure><p id="1b4c837a-cb44-4d71-ab4d-eb1ae53b5cca" class=""><strong>Total Reward per Episode</strong></p><ul id="dee3da10-2a91-45bf-8325-26b2a4a9e956" class="bulleted-list"><li style="list-style-type:disc">The graph starts with a value of around negative rewards and touches to around 2500 at some episodes.</li></ul><ul id="b4b726bb-460f-4492-9f1b-b2256484821e" class="bulleted-list"><li style="list-style-type:disc">There is a small amount of variation in the total reward from episode to episode. This is likely due to the stochastic nature of the environment in which the agent is learning.</li></ul><p id="9f13d876-1c63-4c52-981d-18fb332049f3" class="">
+</p><figure id="52ee8775-bb60-43b0-b195-342fc7de39e4" class="image"><a href="Untitled%2022.png"><img style="width:707.984375px" src="Untitled%2022.png"/></a></figure><p id="e8d720c0-9cda-471e-bf41-e894bacd6325" class=""><strong>Evaluation of Trained Agent&#x27;s Performance</strong></p><ul id="78bcf8e3-9801-4316-b09e-cc94d0fd8282" class="bulleted-list"><li style="list-style-type:disc">Assessing the performance of the trained agent. Using only greedy actions from the learnt policy. Train parameter set to False.</li></ul><ul id="d764f1fa-aa48-4fc8-90f6-dd810d74b6df" class="bulleted-list"><li style="list-style-type:disc">The graph shows the total account value over time. </li></ul><ul id="c515d988-64cb-4265-8aca-cc2896e59c4d" class="bulleted-list"><li style="list-style-type:disc">The total account value in the graph is increasing over time. It started at around $100,000 and takes a dip near 15 - 20 days and later it increased to around $160,000 over the course of the 80 days shown in the graph. </li></ul><figure id="6a89874f-5b86-4a8d-ba82-78074b556e7c" class="image"><a href="Untitled%2023.png"><img style="width:707.984375px" src="Untitled%2023.png"/></a></figure><h1 id="96d9fe29-9a8c-449e-9f2a-7a4dcbb3ae1c" class="">Bonus</h1><h2 id="8165a01e-19c0-474e-8e5d-5f0145c4d1df" class="">GitHub Expert:</h2><ul id="8c2a2670-ae2f-4a6b-8ff6-cd18a63b818f" class="bulleted-list"><li style="list-style-type:disc">During the checkpoint, I made commits, but I forgot to add &quot;ub-rl&quot; as a collaborator. I attempted to add &quot;ub-rl&quot; before the final deadline, but it didn&#x27;t show up. However, I have screenshots and the link to provide evidence, along with my commit history.<br/><br/></li></ul><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="4a17c8a1-5af0-44eb-b352-b344438638be"><div style="font-size:1.5em"><span class="icon">🔗</span></div><div style="width:100%"><a href="https://github.com/REDDITARUN/AI_at_play_SquirrelMaze_StockTrader_RL">https://github.com/REDDITARUN/AI_at_play_SquirrelMaze_StockTrader_RL</a></div></figure><figure id="a3f5e7ca-3b59-47d6-b9dc-d0b7ed50457f" class="image"><a href="Untitled%2024.png"><img style="width:707.9375px" src="Untitled%2024.png"/></a></figure><figure id="1939f7a8-3214-491b-9cc5-35f8d7e4b8be" class="image"><a href="Untitled%2025.png"><img style="width:707.984375px" src="Untitled%2025.png"/></a></figure><h2 id="4703e0f0-a131-4f43-8b3d-f5b7df380288" class="">CCR Submission</h2><ul id="ba377095-191f-491b-b0ab-5f1958172969" class="bulleted-list"><li style="list-style-type:disc">Execution of the code</li></ul><figure id="1dd6cb02-29bf-4014-8bee-cd55eb2046aa" class="image"><a href="Untitled%2026.png"><img style="width:708px" src="Untitled%2026.png"/></a></figure><ul id="82dca7c5-f1cf-4b5b-8c0f-787377ef213b" class="bulleted-list"><li style="list-style-type:disc">!pwd command</li></ul><figure id="9e3e1453-18e4-4670-ba0d-5e069d3c1b23" class="image"><a href="Untitled%2027.png"><img style="width:708px" src="Untitled%2027.png"/></a></figure><figure id="06669b36-78c7-48b0-b86e-93df65e7c4e6" class="image"><a href="Untitled%2028.png"><img style="width:707.953125px" src="Untitled%2028.png"/></a></figure><h1 id="331df221-b585-4c66-bb3e-116112d8f989" class="">References</h1><ul id="e481793f-95d3-48bd-b444-ed92a75c6888" class="bulleted-list"><li style="list-style-type:disc">CSE 574 D Introduction to ML course, Fall 2023, titled bhanucha_charviku_Assignment_3.</li></ul><ul id="50ff0ed0-4d32-4528-a0f4-24aae19a8682" class="bulleted-list"><li style="list-style-type:disc"><em>Double Q-learning</em>. (n.d.). Neurips.Cc. Retrieved February 8, 2024, from https://proceedings.neurips.cc/paper_files/paper/2010/file/091d584fced301b442654dd8c23b3fc9-Paper.pdf</li></ul><ul id="0b061579-1da4-4022-a459-ecff2e3b3921" class="bulleted-list"><li style="list-style-type:disc">Hasselt, H. V., Guez, A., &amp; Silver, D. (2015). Deep reinforcement learning with Double Q-learning. <em>AAAI Conference on Artificial Intelligence</em>, 2094–2100. https://doi.org/10.1609/aaai.v30i1.10295</li></ul><ul id="15482cb5-d3bb-4ef6-be85-fbf12be03d59" class="bulleted-list"><li style="list-style-type:disc"><em>SARSA vs Q - learning</em>. (n.d.). Github.Io. Retrieved February 8, 2024, from https://tcnguyen.github.io/reinforcement_learning/sarsa_vs_q_learning.html</li></ul><ul id="c6d5131c-ddec-41a0-a340-a7abef4ce6c8" class="bulleted-list"><li style="list-style-type:disc"><em>What is the difference between Q-learning and SARSA?</em> (n.d.). Stack Overflow. Retrieved February 8, 2024, from https://stackoverflow.com/questions/6848828/what-is-the-difference-between-q-learning-and-sarsa</li></ul><ul id="d7fe76a6-b4ee-423f-b6e8-8c47efc5ddca" class="bulleted-list"><li style="list-style-type:disc">RL Environment Demo by Alina Vereshchaka</li></ul><ul id="8e9865b0-ab7f-4a6d-bdbb-e967d8765f25" class="bulleted-list"><li style="list-style-type:disc">RL Environment Visualization by Nitin Kulkarni</li></ul><p id="a92ae6e2-44cc-44fa-979f-0f7ec31aabde" class="">
+</p><p id="108f8383-b3fa-4f23-93ba-8eb17dd9204b" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
