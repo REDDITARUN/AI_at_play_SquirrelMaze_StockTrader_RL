@@ -2,7 +2,7 @@
 
 Hello there! Welcome to this Reinforcement Learning (RL) project where we’re exploring two distinct environments: a **Squirrel Maze** and a **Stock Trader**. Each environment offers unique learning experiences and challenges to make our RL agents smarter. Let’s dive into the details!
 
-Read more at: 
+Read more at: https://redditarun.github.io/AI_at_play_SquirrelMaze_StockTrader_RL/
 
 ---
 
